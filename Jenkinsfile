@@ -2,17 +2,12 @@ pipeline {
     agent any
     
     environment {
-        DOCKER_IMAGE = 'Dharshan080805/docker-jenkins-app'
+        DOCKER_IMAGE = 'dharshan080805/devops-app'
         DOCKER_TAG = 'latest'
     }
     
     stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/dharsha2005/devops-project.git'
-            }
-        }
-        
+
         stage('Build Docker Image') {
             steps {
                 script {
@@ -23,10 +18,8 @@ pipeline {
         
         stage('Login to Docker Hub') {
             steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
-                    }
+                withCredentials([usernamePassword(credentialsId: 'docker-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    sh 'echo $PASS | docker login -u $USER --password-stdin'
                 }
             }
         }
@@ -34,7 +27,7 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    docker.image("${DOCKER_IMAGE}").push("${DOCKER_TAG}")
                 }
             }
         }
