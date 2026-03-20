@@ -10,9 +10,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
-                }
+                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
             }
         }
         
@@ -26,9 +24,7 @@ pipeline {
         
         stage('Push to Docker Hub') {
             steps {
-                script {
-                    docker.image("${DOCKER_IMAGE}").push("${DOCKER_TAG}")
-                }
+                sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
             }
         }
     }
